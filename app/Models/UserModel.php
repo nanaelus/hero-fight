@@ -23,8 +23,8 @@ class UserModel extends Model
 
     // Validation
     protected $validationRules = [
-        'username' => 'required|is_unique[TableUser.username,id,{id}]|min_length[3]|max_length[100]',
-        'email'    => 'required|valid_email|is_unique[TableUser.email,id,{id}]',
+        'username' => 'required|is_unique[user.username,id,{id}]|min_length[3]|max_length[100]',
+        'email'    => 'required|valid_email|is_unique[user.email,id,{id}]',
         'password' => 'required|min_length[8]',
         'id_permission' => 'required|is_natural_no_zero',
     ];
@@ -68,8 +68,8 @@ class UserModel extends Model
     // Relations avec les permissions
     public function getPermissions()
     {
-        return $this->join('TableUserPermission', 'TableUser.id_permission = TableUserPermission.id')
-            ->select('TableUser.*, TableUserPermission.name as permission_name')
+        return $this->join('user_permission', 'user.id_permission = user_permission.id')
+            ->select('user.*, user_permission.name as permission_name')
             ->findAll();
     }
 
@@ -106,9 +106,9 @@ class UserModel extends Model
     }
 
     public function countUserByPermission() {
-        $builder = $this->db->table('TableUser U');
+        $builder = $this->db->table('user U');
         $builder->select('UP.name, count(U.id) as count');
-        $builder->join('TableUserPermission UP', 'U.id_permission = UP.id');
+        $builder->join('user_permission UP', 'U.id_permission = UP.id');
         $builder->groupBy('U.id_permission');
         return $builder->get()->getResultArray();
     }
@@ -138,15 +138,15 @@ class UserModel extends Model
     public function getPaginatedUser($start, $length, $searchValue, $orderColumnName, $orderDirection)
     {
         $builder = $this->builder();
-        $builder->join('TableUserPermission', 'TableUser.id_permission = TableUserPermission.id', 'left');
-        $builder->join('media', 'TableUser.id = media.entity_id AND media.entity_type = "user"', 'left');
-        $builder->select('TableUser.*, TableUserPermission.name as permission_name, media.file_path as avatar_url');
+        $builder->join('user_permission', 'user.id_permission = user_permission.id', 'left');
+        $builder->join('media', 'user.id = media.entity_id AND media.entity_type = "user"', 'left');
+        $builder->select('user.*, user_permission.name as permission_name, media.file_path as avatar_url');
 
         // Recherche
         if ($searchValue != null) {
             $builder->like('username', $searchValue);
             $builder->orLike('email', $searchValue);
-            $builder->orLike('TableUserPermission.name', $searchValue);
+            $builder->orLike('user_permission.name', $searchValue);
         }
 
         // Tri
@@ -162,26 +162,24 @@ class UserModel extends Model
     public function getTotalUser()
     {
         $builder = $this->builder();
-        $builder->join('TableUserPermission', 'TableUser.id_permission = TableUserPermission.id');
+        $builder->join('user_permission', 'user.id_permission = user_permission.id');
         return $builder->countAllResults();
     }
 
     public function getFilteredUser($searchValue)
     {
         $builder = $this->builder();
-        $builder->join('TableUserPermission', 'TableUser.id_permission = TableUserPermission.id', 'left');
-        $builder->join('media', 'TableUser.id = media.entity_id AND media.entity_type = "user"', 'left');
-        $builder->select('TableUser.*, TableUserPermission.name as permission_name, media.file_path as avatar_url');
+        $builder->join('user_permission', 'user.id_permission = user_permission.id', 'left');
+        $builder->join('media', 'user.id = media.entity_id AND media.entity_type = "user"', 'left');
+        $builder->select('user.*, user_permission.name as permission_name, media.file_path as avatar_url');
 
         // @phpstan-ignore-next-line
         if (! empty($searchValue)) {
             $builder->like('username', $searchValue);
             $builder->orLike('email', $searchValue);
-            $builder->orLike('TableUserPermission.name', $searchValue);
+            $builder->orLike('user_permission.name', $searchValue);
         }
 
         return $builder->countAllResults();
     }
-
-
 }

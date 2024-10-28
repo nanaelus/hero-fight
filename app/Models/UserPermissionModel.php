@@ -6,7 +6,7 @@ use CodeIgniter\Model;
 
 class UserPermissionModel extends Model
 {
-    protected $table = 'TableUserPermission';
+    protected $table = 'user_permission';
     protected $primaryKey = 'id';
 
     // Champs permis pour les opérations d'insertion et de mise à jour
@@ -70,9 +70,9 @@ class UserPermissionModel extends Model
 
     public function getUsersByPermission($permissionId)
     {
-        return $this->join('TableUser', 'TableUserPermission.id = TableUser.id_permission')
-            ->where('TableUserPermission.id', $permissionId)
-            ->select('TableUser.*, TableUserPermission.name as permission_name')
+        return $this->join('user', 'user_permission.id = user.id_permission')
+            ->where('user_permission.id', $permissionId)
+            ->select('user.*, user_permission.name as permission_name')
             ->findAll();
     }
 
