@@ -27,10 +27,16 @@ class Character extends BaseController
 
     public function postcreatecharacter(){
         $data = $this->request->getPost();
-        if(model('CharacterModel')->createCharacter($data)) {
+        $cm = model('CharacterModel');
+
+        $newCharacterId = $cm->createCharacter($data);
+        if($newCharacterId) {
             $file = $this->request->getFile('profile_image');
             if($file && $file->isValid()) {
-                $mediaData = ['entity_type' => 'character', 'entity_id' => model('CharacterModel')->createCharacter($data)];
+                $mediaData = [
+                    'entity_type' => 'character',
+                    'entity_id' => $newCharacterId,
+                    ];
 
                 $filePath = upload_file($file, 'avatar', $data['name'], $mediaData);
 
@@ -40,10 +46,11 @@ class Character extends BaseController
                 }
             }
             $this->success('Personnage créé avec succès!');
+            $this->redirect('admin/character');
         } else {
             $this->error('Erreur lors de la création du personnage');
+            $this->redirect('admin/character/new');
         }
-        $this->redirect('admin/character');
     }
 
     public function postsearchdatatable()

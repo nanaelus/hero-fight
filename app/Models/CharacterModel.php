@@ -49,6 +49,7 @@ class CharacterModel extends Model
     }
 
     public function createCharacter($data) {
+//        print_r($data); die();
         return $this->insert($data);
     }
 

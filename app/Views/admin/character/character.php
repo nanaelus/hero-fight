@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col">
-        <form method="POST" action="<?= base_url('admin/character/createcharacter'); ?>">
+        <form method="POST" action="<?= base_url('admin/character/createcharacter'); ?>" enctype="multipart/form-data">
         <div class="card">
             <div class="card-header">
                 <h3> Création d'un Personnage</h3>
@@ -32,7 +32,7 @@
                 </div>
                 <div class="mt-3">
                     <label for="image" class="form-label">Avatar</label>
-                    <input class="form-control" type="file" name="profile_image" id="image" />
+                    <input class="form-control" type="file" name="profile_image" id="image">
                 </div>
             </div>
             <div class="card-footer">
