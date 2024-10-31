@@ -1,10 +1,10 @@
 <div class="sidebar sidebar-dark sidebar-fixed border-end" id="sidebar">
     <div class="sidebar-header border-bottom">
         <div class="sidebar-brand">
-            <img src="<?= base_url('/assets/brand/logo-blanc.svg'); ?>" class="sidebar-brand-full" _width="88"
+            <img src="<?= base_url('/assets/brand/logo2-full.png'); ?>" class="sidebar-brand-full" _width="88"
             height="32"
             alt="Mon Projet" />
-            <img src="<?= base_url('/assets/brand/logo-blanc.svg'); ?>" class="sidebar-brand-narrow" _width="32"
+            <img src="<?= base_url('/assets/brand/logo2-full.png'); ?>" class="sidebar-brand-narrow" _width="32"
                  height="32"
                  alt="Mon Projet" />
             Mon Projet

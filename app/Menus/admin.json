@@ -1,42 +1,36 @@
 {
   "accueil": {
-    "title": "Accueil",
-    "url": "/",
-    "perm": "none",
+    "title": "Tableau de Bord",
+    "url": "/admin/dashboard",
     "icon": "<i class=\"nav-icon fa-solid fa-house\"></i>",
     "class": "main-menu-accueil"
   },
-  "produits": {
-    "title": "Produits",
-    "url": "/Product",
-    "perm": "none",
-    "icon": "<i class=\"nav-icon fas fa-file-invoice-dollar\"></i>",
+  "items": {
+    "title" : "Personnages",
+    "url" : "/admin/character",
+    "icon": "<i class=\"nav-icon fa-solid fa-boxes-stacked\"></i>"
+  },
+  "media": {
+    "title": "Medias",
+    "url": "/admin/media",
+    "icon": "<i class=\"nav-icon fa-solid fa-image\"></i>"
+  },
+  "administration": {
+    "title": "Administration",
+    "url": "/",
+    "require": "administrateur",
+    "icon": "<i class=\"nav-icon fas fa-gear\"></i>",
     "class": "",
     "subs": {
-      "search": {
-        "title": "Rechercher un produit",
-        "url": "/Product/search",
-        "icon": "<i class=\"nav-icon fas fa-magnifying-glass\"></i>"
+      "user": {
+        "title": "Utilisateur",
+        "url": "/admin/user",
+        "icon": "<i class=\"nav-icon fas fa-users-gear\"></i>"
       },
-      "newproduct": {
-        "title": "Nouveau Produit",
-        "url": "/Product/new",
-        "icon": "<i class=\"nav-icon fas fa-file-circle-plus\"></i>"
-      },
-      "imports": {
-        "title": "Import en masse",
-        "url": "/Imports/",
-        "icon": "<i class=\"nav-icon fas fa-download\"></i>"
-      },
-      "export": {
-        "title": "Export",
-        "url": "/Product/export",
-        "icon": "<i class=\"nav-icon fas fa-upload\"></i>"
-      },
-      "prices": {
-        "title": "Tarifs Pro",
-        "url": "/Prices/",
-        "icon": "<i class=\"nav-icon fas fa-euro\"></i>"
+      "user-permission": {
+        "title": "Rôle",
+        "url": "/admin/userpermission",
+        "icon": "<i class=\"nav-icon fas fa-user-gear\"></i>"
       }
     }
   }
