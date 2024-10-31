@@ -10,7 +10,8 @@
                     <thead>
                     <tr>
                         <th>ID perso</th>
-                        <th>Nom utilisateur</th> <!-- Mettre le nom d'utilisateur?? -->
+                        <th>Nom utilisateur</th>
+                        <th>Avatar</th>
                         <th>Nom du Personnage</th>
                         <th>Force</th>
                         <th>Constitution</th>
@@ -47,6 +48,17 @@
             "columns" : [
                 {"data" : "id"},
                 {"data" : "username"},
+                {
+                    data : "avatar_url",
+                    sortable : false,
+                    render : function(data) {
+                        if(data) {
+                            return `<img src="${baseUrl}/${data}" alt="avatar" style="max-width: 20px; height= auto;">`;
+                        } else {
+                            return `<img src="${baseUrl}/assets/img/avatars/1.jpg" alt="Default Avatar" style="max-width: 20px; height: auto;">`;
+                        }
+                    }
+                },
                 {"data" : "name"},
                 {"data" : "strength"},
                 {"data" : "constitution"},

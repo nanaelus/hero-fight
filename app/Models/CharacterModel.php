@@ -6,7 +6,7 @@ use CodeIgniter\Model;
 
 class CharacterModel extends Model
 {
-    protected $table            = 'character';
+    protected $table            = 'characters';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
@@ -44,20 +44,38 @@ class CharacterModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
-    public function getAllCharacters() {
-        return $this->findAll();
-    }
 
     public function createCharacter($data) {
 //        print_r($data); die();
         return $this->insert($data);
     }
 
+    public function deleteCharacter($id) {
+        return $this->delete($id);
+    }
+
+    public function activateCharacter($id)
+    {
+        $builder = $this->builder();
+        $builder->set('deleted_at', NULL);
+        $builder->where('id', $id);
+        return $builder->update();
+    }
+
+    public function getAllCharacters() {
+        return $this->findAll();
+    }
+
+    public function getCharacterById($id) {
+        return $this->find($id);
+    }
+
     public function getPaginated($start, $length, $searchValue, $orderColumnName, $orderDirection)
     {
         $builder = $this->builder();
-        $builder->select('character.*, u.username');
-        $builder->join('user u', 'u.id = character.user_id', 'left');
+        $builder->select('characters.*, u.username, m.file_path as avatar_url');
+        $builder->join('user u', 'u.id = characters.user_id', 'left');
+        $builder->join('media m','m.entity_id = characters.id AND m.entity_type = "character"', 'left');
 
         // Recherche
         if ($searchValue != null) {
@@ -87,8 +105,9 @@ class CharacterModel extends Model
     public function getFiltered($searchValue)
     {
         $builder = $this->builder();
-        $builder->select('character.*, u.username');
-        $builder->join('user u', 'u.id = character.user_id', 'left');
+        $builder->select('characters.*, u.username, m.file_path as avatar_url');
+        $builder->join('user u', 'u.id = characters.user_id', 'left');
+        $builder->join('media m','m.entity_id = characters.id AND m.entity_type = "character"', 'left');
 
         if (!empty($searchValue)) {
             $builder->like('name', $searchValue);
@@ -99,15 +118,8 @@ class CharacterModel extends Model
         return $builder->countAllResults();
     }
 
-    public function deleteCharacter($id) {
-        return $this->delete($id);
-    }
 
-    public function activateCharacter($id)
-    {
-        $builder = $this->builder();
-        $builder->set('deleted_at', NULL);
-        $builder->where('id', $id);
-        return $builder->update();
+    public function updateCharacter($id, $data) {
+        return $this->update($id, $data);
     }
 }

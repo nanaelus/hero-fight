@@ -13,16 +13,51 @@ class Character extends BaseController
     public function getIndex($id=null)
     {
         if($id == null) {
+            $avatars = model('MediaModel')->getAllAvatar();
             $characters = model('CharacterModel')->getAllCharacters();
-            return $this->view('admin/character/index',['characters' => $characters], true);
+            return $this->view('admin/character/index',['characters' => $characters, 'avatars' => $avatars], true);
         }
+        $character = model('CharacterModel')->getCharacterById($id);
         if($id == "new") {
             $points = 10;
-            return $this->view('admin/character/character', ['points' =>$points], true);
+            return $this->view('admin/character/character', ['points' =>$points, "character" => $character], true);
         }
         if($id){
-            return $this->view('admin/character/character', [], true);
+            $avatar = model('MediaModel')->getAvatarByIdCharacter($id, "character");
+            return $this->view('admin/character/character', ['character' => $character, 'avatar' => $avatar], true);
         }
+    }
+
+    public function postupdatecharacter() {
+        $data = $this->request->getPost();
+        $file = $this->request->getFile('profile_image');
+        if($file && $file->getError() !== UPLOAD_ERR_NO_FILE) {
+//            print_r($data); die();
+            $old_media = model('MediaModel')->getAvatarByIdCharacter($data['id'], "character");
+            if($old_media) {
+                model('MediaModel')->deleteMedia($old_media[0]['id']);
+            }
+
+            $mediaData = [
+                'entity_type' => "character",
+                'entity_id' => $data['id'],
+            ];
+
+            $uploadResult = upload_file($file, 'avatar', $data['name'], $mediaData, false, ['image/jpeg', 'image/png','image/jpg']);
+
+            if(is_array($uploadResult) && $uploadResult['status'] ==="error") {
+                $this->error("Une erreur est survenue lors de l'upload du fichier");
+                $this->redirect('admin/character');
+            }
+
+        }
+
+        if(model('CharacterModel')->updateCharacter($data['id'], $data)) {
+            $this->success("Le personnage a bien été modifié");
+        } else {
+            $this->error("Une erreur est survenue lors de la modification du personnage");
+        }
+        $this->redirect('admin/character');
     }
 
     public function postcreatecharacter(){
@@ -63,6 +98,9 @@ class Character extends BaseController
         $length      = $this->request->getPost('length');
         $searchValue = $this->request->getPost('search')['value'];
 
+        $type = $this->request->getPost('type') ?? 'character';
+        $custom_filter = $this->request->getPost('filter') ?? null;
+        $custom_filter_value = $this->request->getPost('filter_value') ?? null;
 
         // Obtenez les informations sur le tri envoyées par DataTables
         $orderColumnIndex = $this->request->getPost('order')[0]['column'] ?? 0;
@@ -70,13 +108,13 @@ class Character extends BaseController
         $orderColumnName = $this->request->getPost('columns')[$orderColumnIndex]['data'] ?? 'id';
 
         // Obtenez les données triées et filtrées
-        $data = $model->getPaginated($start, $length, $searchValue, $orderColumnName, $orderDirection);
+        $data = $model->getPaginated($start, $length, $searchValue, $orderColumnName, $orderDirection,$type, $custom_filter, $custom_filter_value);
 
         // Obtenez le nombre total de lignes sans filtre
-        $totalRecords = $model->getTotal();
+        $totalRecords = $model->getTotal($type, $custom_filter, $custom_filter_value);
 
         // Obtenez le nombre total de lignes filtrées pour la recherche
-        $filteredRecords = $model->getFiltered($searchValue);
+        $filteredRecords = $model->getFiltered($searchValue,$type, $custom_filter, $custom_filter_value);
 
         $result = [
             'draw'            => $draw,
