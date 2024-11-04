@@ -7,7 +7,6 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                <input type="hidden" name="user_id" value="<?= isset($character) ? $character['user_id'] : $user->id; ?>">
                 <label for="name" class="form-label">Nom du Personnage</label>
                 <input type="text" name="name" class="form-control" <?= isset($character) ? "Value='" . $character['name'] . "'" : "placeholder='Entrez votre Pseudo' required"; ?> id="name">
                 </div>
@@ -36,6 +35,15 @@
                         <input type="text" readonly name="agility" id="agility" value="<?= isset($character) ? $character['agility'] : 0 ;?>" style="width: 30px">
                         <i class="fa-solid fa-circle-plus" id="a-plus"></i>
                     </div>
+                </div>
+                <div class="row">
+                    <label for="user_id" class="form-label mt-3">Choix de l'utilisateur</label>
+                    <select name="user_id" class="form-select">
+                        <?php foreach ($allUsers as $user) { ?>
+                            <option value="<?= $user['id']; ?>" <?= (isset($character) && $user['id'] == $character['user_id']) ? "selected" : ""; ?>><?= $user['username']; ?></option>
+                        <?php } ?>
+
+                    </select>
                 </div>
                 <div class="mt-3">
                     <label for="image" class="form-label">Avatar</label>
@@ -78,13 +86,11 @@
             }
         });
         $('#c-plus').click(function () {
-            if(<?= isset($character) ? "" : "constitution < 10 && "  ;?>TotalPoints>0) {
                 constitution += 1;
                 TotalPoints -= 1;
                 $('#constitution').val(constitution);
                 $('#points').text("Points restant : " + TotalPoints);
                 $('#d-points').val(TotalPoints);
-            }
         });
         $('#s-minus').click(function () {
             if(strength > 0) {
@@ -96,13 +102,11 @@
             }
         });
         $('#s-plus').click(function () {
-            if(<?= isset($character) ? "" : "strength < 10 && "  ;?>TotalPoints>0) {
                 strength += 1;
                 TotalPoints -= 1;
                 $('#strength').val(strength);
                 $('#points').text("Points restant : " + TotalPoints);
                 $('#d-points').val(TotalPoints);
-            }
         });
         $('#a-minus').click(function () {
             if(agility > 0) {
@@ -114,13 +118,11 @@
             }
         });
         $('#a-plus').click(function () {
-            if(<?= isset($character) ? "" : "agility < 10 && "  ;?>TotalPoints>0) {
                 agility += 1;
                 TotalPoints -= 1;
                 $('#agility').val(agility);
                 $('#points').text("Points restant : " + TotalPoints);
                 $('#d-points').val(TotalPoints);
-            }
         });
     });
 </script>

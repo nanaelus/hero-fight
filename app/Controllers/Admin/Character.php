@@ -17,14 +17,15 @@ class Character extends BaseController
             $characters = model('CharacterModel')->getAllCharacters();
             return $this->view('admin/character/index',['characters' => $characters, 'avatars' => $avatars], true);
         }
+        $allUsers = model('UserModel')->getAllUsers();
         $character = model('CharacterModel')->getCharacterById($id);
         if($id == "new") {
             $points = 10;
-            return $this->view('admin/character/character', ['points' =>$points, "character" => $character], true);
+            return $this->view('admin/character/character', ['points' =>$points, "character" => $character, 'allUsers' => $allUsers], true);
         }
         if($id){
             $avatar = model('MediaModel')->getAvatarByIdCharacter($id, "character");
-            return $this->view('admin/character/character', ['character' => $character, 'avatar' => $avatar], true);
+            return $this->view('admin/character/character', ['character' => $character, 'avatar' => $avatar, 'allUsers' => $allUsers], true);
         }
     }
 
