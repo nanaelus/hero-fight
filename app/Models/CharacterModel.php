@@ -50,6 +50,10 @@ class CharacterModel extends Model
         return $this->insert($data);
     }
 
+    public function updateCharacter($id, $data) {
+        return $this->update($id, $data);
+    }
+
     public function deleteCharacter($id) {
         return $this->delete($id);
     }
@@ -70,12 +74,27 @@ class CharacterModel extends Model
         return $this->find($id);
     }
 
-    public function getPaginated($start, $length, $searchValue, $orderColumnName, $orderDirection)
+    public function getCharactersByIdUser($id_user) {
+        return $this->where('user_id', $id_user)->findAll();
+    }
+
+    public function getPaginated($start, $length, $searchValue, $orderColumnName, $orderDirection, $entity_type ="character", $custom_filter = null, $custom_filter_value = null)
     {
         $builder = $this->builder();
         $builder->select('characters.*, u.username, m.file_path as avatar_url');
         $builder->join('user u', 'u.id = characters.user_id', 'left');
         $builder->join('media m','m.entity_id = characters.id AND m.entity_type = "character"', 'left');
+        if($custom_filter) {
+            switch ($custom_filter) {
+                case "character" :
+                    $builder->where('characters.user_id', $custom_filter_value);
+                    break;
+                case 'user' :
+                    $builder->where('characters.user_id', $custom_filter_value);
+                    $builder->where('characters.deleted_at IS NULL');
+                    break;
+            }
+        }
 
         // Recherche
         if ($searchValue != null) {
@@ -95,19 +114,43 @@ class CharacterModel extends Model
         return $builder->get()->getResultArray();
     }
 
-    public function getTotal()
-    {
-        $builder = $this->builder();
-        $builder->select('*');
-        return $builder->countAllResults();
-    }
-
-    public function getFiltered($searchValue)
+    public function getTotal($entity_type ="character", $custom_filter = null, $custom_filter_value = null)
     {
         $builder = $this->builder();
         $builder->select('characters.*, u.username, m.file_path as avatar_url');
         $builder->join('user u', 'u.id = characters.user_id', 'left');
         $builder->join('media m','m.entity_id = characters.id AND m.entity_type = "character"', 'left');
+        if($custom_filter) {
+            switch ($custom_filter) {
+                case "character" :
+                    $builder->where('characters.user_id', $custom_filter_value);
+                    break;
+                case 'user' :
+                    $builder->where('characters.user_id', $custom_filter_value);
+                    $builder->where('characters.deleted_at IS NULL');
+                    break;
+            }
+        }
+        return $builder->countAllResults();
+    }
+
+    public function getFiltered($searchValue, $entity_type ="character", $custom_filter = null, $custom_filter_value = null)
+    {
+        $builder = $this->builder();
+        $builder->select('characters.*, u.username, m.file_path as avatar_url');
+        $builder->join('user u', 'u.id = characters.user_id', 'left');
+        $builder->join('media m','m.entity_id = characters.id AND m.entity_type = "character"', 'left');
+        if($custom_filter) {
+            switch ($custom_filter) {
+                case "character" :
+                    $builder->where('characters.user_id', $custom_filter_value);
+                    break;
+                case 'user' :
+                    $builder->where('characters.user_id', $custom_filter_value);
+                    $builder->where('characters.deleted_at IS NULL');
+                    break;
+            }
+        }
 
         if (!empty($searchValue)) {
             $builder->like('name', $searchValue);
@@ -116,10 +159,5 @@ class CharacterModel extends Model
             $builder->orLike('level', $searchValue);
         }
         return $builder->countAllResults();
-    }
-
-
-    public function updateCharacter($id, $data) {
-        return $this->update($id, $data);
     }
 }
